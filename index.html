@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCGworkflow | Live Showcase</title>
+    <!-- switched to Space Grotesk for a more modern tech vibe -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* customized these colors, the old ones were too generic */
+            --bg: #09090b; /* zinc-950 */
+            --surface: #18181b; /* zinc-900 */
+            --primary: #f59e0b; /* amber-500 */
+            --secondary: #fbbf24; /* amber-400 */
+            --accent: #3b82f6; /* blue-500 for variety */
+            --text: #f4f4f5; /* zinc-100 */
+            --muted: #a1a1aa; /* zinc-400 */
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            overflow-x: hidden; 
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; }
+        
+        /* Hero Section */
+        header { 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center; 
+            position: relative; 
+            padding: 40px 20px; 
+        }
+        
+        /* The glow effect behind everything */
+        .bg-glow { 
+            position: absolute; 
+            width: 700px; 
+            height: 700px; 
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%); 
+            opacity: 0.12; 
+            top: 40%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            z-index: -1; 
+            filter: blur(60px); 
+            animation: pulse 10s infinite alternate ease-in-out; 
+        }
+        
+        @keyframes pulse { 
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.1; } 
+            100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.18; } 
+        }
+        
+        h1 { 
+            font-size: clamp(3rem, 8vw, 5rem); 
+            font-weight: 700; 
+            margin-bottom: 15px; 
+            background: linear-gradient(135deg, #fff, var(--secondary)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            letter-spacing: -0.04em;
+        }
+        
+        h2 { 
+            font-size: clamp(1.2rem, 3vw, 1.8rem); 
+            color: var(--muted); 
+            margin-bottom: 25px; 
+            font-weight: 500; 
+            letter-spacing: -0.02em;
+        }
+        
+        p.desc { 
+            max-width: 650px; 
+            color: var(--muted); 
+            font-size: 1.1rem; 
+            margin-bottom: 45px; 
+        }
+        
+        .tech-tags { 
+            display: flex; 
+            flex-wrap: wrap;
+            gap: 12px; 
+            margin-bottom: 45px; 
+            justify-content: center; 
+        }
+        
+        .tech-tags span { 
+            background: rgba(245, 158, 11, 0.1); 
+            border: 1px solid rgba(245, 158, 11, 0.2); 
+            padding: 8px 18px; 
+            border-radius: 30px; 
+            font-size: 0.85rem; 
+            font-weight: 600;
+            color: var(--secondary); 
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        
+        .btn { 
+            padding: 16px 32px; 
+            background: var(--primary); 
+            color: #18181b; /* dark text for contrast */
+            text-decoration: none; 
+            font-weight: 700; 
+            font-family: 'Space Grotesk', sans-serif;
+            border-radius: 8px; 
+            transition: all 0.2s; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 10px; 
+            font-size: 1.1rem;
+        }
+        
+        .btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3); 
+            background: var(--secondary); 
+        }
+        
+        /* App Mockup UI */
+        .mockup { 
+            margin-top: 70px; 
+            width: 100%; 
+            max-width: 1000px; 
+            height: 550px; 
+            background: var(--surface); 
+            border-radius: 16px; 
+            border: 1px solid rgba(255,255,255,0.08); 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6); 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+            position: relative; 
+        }
+        
+        .mockup-header { 
+            height: 44px; 
+            background: rgba(0,0,0,0.4); 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+            display: flex; 
+            align-items: center; 
+            padding: 0 20px; 
+            gap: 8px; 
+        }
+        
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot.r { background: #ef4444; } .dot.y { background: #f59e0b; } .dot.g { background: #10b981; }
+        
+        .mockup-body { 
+            flex: 1; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative; 
+            background: radial-gradient(circle at top center, rgba(255,255,255,0.03) 0%, transparent 100%); 
+        }
+        
+        /* TODO: replace this loading spinner with actual app screenshots later */
+        .loader { 
+            width: 60px; 
+            height: 60px; 
+            border: 3px solid rgba(255,255,255,0.05); 
+            border-top-color: var(--primary); 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+            margin: 0 auto 20px; 
+        }
+        
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        .mockup-text { text-align: center; color: var(--muted); z-index: 10; }
+        
+        /* Interactive overlay wireframe - purely CSS fake UI */
+        .wireframe { 
+            position: absolute; 
+            inset: 20px; 
+            border-radius: 8px; 
+            display: grid; 
+            grid-template-columns: 240px 1fr; 
+            gap: 20px; 
+            opacity: 0.6; 
+        }
+        
+        .wf-sidebar { 
+            background: rgba(255,255,255,0.02); 
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 8px; 
+        }
+        
+        .wf-main { 
+            display: grid; 
+            grid-template-rows: 70px 1fr; 
+            gap: 20px; 
+        }
+        
+        .wf-header { 
+            background: rgba(255,255,255,0.02); 
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 8px; 
+        }
+        
+        .wf-content { 
+            background: rgba(255,255,255,0.02); 
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 8px; 
+        }
+
+        /* Features grid (newly added for the frontend view) */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 80px auto;
+            padding: 0 20px;
+            text-align: left;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(245, 158, 11, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 10px;
+            color: var(--text);
+            font-size: 1.3rem;
+        }
+
+        .feature-card p {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="bg-glow"></div>
+        <h1>CCGworkflow</h1>
+        <h2>Enterprise Team Collaboration Tool</h2>
+        <p class="desc">A robust workflow management system built to streamline processes. Features Kanban boards, real-time sync, role-based access, and automated task assignments.</p>
+        
+        <div class="tech-tags">
+            <span>TypeScript</span>
+            <span>React</span>
+            <span>Node.js</span>
+            <span>Redux</span>
+            <span>PostgreSQL</span>
+        </div>
+        
+        <a href="https://github.com/Fred4377/CCGworkflow" class="btn">
+            <i class="fab fa-github"></i> View on GitHub
+        </a>
+        
+        <div class="mockup">
+            <div class="mockup-header">
+                <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+            </div>
+            <div class="mockup-body">
+                <div class="wireframe">
+                    <div class="wf-sidebar"></div>
+                    <div class="wf-main">
+                        <div class="wf-header"></div>
+                        <div class="wf-content"></div>
+                    </div>
+                </div>
+                <div class="mockup-text">
+                    <div class="loader"></div>
+                    <h3 style="font-size: 1.4rem; color: #f4f4f5;">App Initializing...</h3>
+                    <p style="font-size: 0.95rem; margin-top: 8px;">The backend API cluster is currently waking up.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-layer-group"></i></div>
+                <h3>Kanban Boards</h3>
+                <p>Drag and drop tasks through customizable pipelines. Perfect for agile teams looking to visualize their workflow seamlessly.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                <h3>Real-time Sync</h3>
+                <p>WebSockets under the hood ensure that when a teammate updates a ticket, everyone's board updates instantly without refreshing.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-shield-halved"></i></div>
+                <h3>Role Based Access</h3>
+                <p>Granular permissions mean admins can lock down sensitive projects while still giving read access to stakeholders.</p>
+            </div>
+        </div>
+    </header>
+</body>
+</html>
