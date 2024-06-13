@@ -27,6 +27,16 @@
             overflow-x: hidden; 
             line-height: 1.6;
         }
+
+        /* Alternating Section Colors */
+        section:nth-of-type(even) {
+            background-color: rgba(255, 255, 255, 0.02) !important;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.2);
+        }
+        section:nth-of-type(odd) {
+            background-color: transparent !important;
+        }
+
         
         h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; }
         
