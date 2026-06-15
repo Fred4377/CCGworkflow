@@ -3,327 +3,725 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CCGworkflow | Live Showcase</title>
-    <!-- switched to Space Grotesk for a more modern tech vibe -->
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="description" content="CCGworkflow — A minimalist, deep teal Trello-like team collaboration Kanban board featuring interactive task movement and role-based badges.">
+    <meta name="keywords" content="CCGworkflow, Kanban board, Trello, workflow management, TypeScript, React, team collaboration">
+    <meta name="author" content="Fred Otieno">
+    <title>CCGworkflow — Team Collaboration & Kanban Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
+        /* ===== Minimalist Deep Teal Design System ===== */
         :root {
-            /* customized these colors, the old ones were too generic */
-            --bg: #09090b; /* zinc-950 */
-            --surface: #18181b; /* zinc-900 */
-            --primary: #f59e0b; /* amber-500 */
-            --secondary: #fbbf24; /* amber-400 */
-            --accent: #3b82f6; /* blue-500 for variety */
-            --text: #f4f4f5; /* zinc-100 */
-            --muted: #a1a1aa; /* zinc-400 */
+            --bg-darker: #0b1111;
+            --bg-dark: #121c1c;
+            --bg-card: #182626;
+            --bg-board: #152424;
+            --border-teal: #213535;
+            --accent-teal: #008080;
+            --accent-teal-bright: #00e5c1;
+            --accent-glow: rgba(0, 229, 193, 0.15);
+            --text-primary: #e6f0ee;
+            --text-secondary: #9cb0ad;
+            --text-muted: #6b827f;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Source Sans Pro', sans-serif;
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: var(--bg); 
-            color: var(--text); 
-            overflow-x: hidden; 
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-darker);
+            color: var(--text-primary);
             line-height: 1.6;
         }
 
-        /* Alternating Section Colors */
-        section:nth-of-type(even) {
-            background-color: rgba(255, 255, 255, 0.02) !important;
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.2);
-        }
-        section:nth-of-type(odd) {
-            background-color: transparent !important;
+        a {
+            text-decoration: none;
+            color: inherit;
         }
 
-        
-        h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; }
-        
-        /* Hero Section */
-        header { 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            text-align: center; 
-            position: relative; 
-            padding: 40px 20px; 
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
         }
-        
-        /* The glow effect behind everything */
-        .bg-glow { 
-            position: absolute; 
-            width: 700px; 
-            height: 700px; 
-            background: radial-gradient(circle, var(--primary) 0%, transparent 70%); 
-            opacity: 0.12; 
-            top: 40%; 
-            left: 50%; 
-            transform: translate(-50%, -50%); 
-            z-index: -1; 
-            filter: blur(60px); 
-            animation: pulse 10s infinite alternate ease-in-out; 
+
+        /* ===== Header Navbar ===== */
+        .navbar {
+            background: var(--bg-dark);
+            border-bottom: 1px solid var(--border-teal);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        
-        @keyframes pulse { 
-            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.1; } 
-            100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.18; } 
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        
-        h1 { 
-            font-size: clamp(3rem, 8vw, 5rem); 
-            font-weight: 700; 
-            margin-bottom: 15px; 
-            background: linear-gradient(135deg, #fff, var(--secondary)); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            letter-spacing: -0.04em;
+        .logo {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.35rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        
-        h2 { 
-            font-size: clamp(1.2rem, 3vw, 1.8rem); 
-            color: var(--muted); 
-            margin-bottom: 25px; 
-            font-weight: 500; 
-            letter-spacing: -0.02em;
+        .logo i {
+            color: var(--accent-teal-bright);
         }
-        
-        p.desc { 
-            max-width: 650px; 
-            color: var(--muted); 
-            font-size: 1.1rem; 
-            margin-bottom: 45px; 
+        .logo span {
+            color: var(--accent-teal-bright);
         }
-        
-        .tech-tags { 
-            display: flex; 
-            flex-wrap: wrap;
-            gap: 12px; 
-            margin-bottom: 45px; 
-            justify-content: center; 
-        }
-        
-        .tech-tags span { 
-            background: rgba(245, 158, 11, 0.1); 
-            border: 1px solid rgba(245, 158, 11, 0.2); 
-            padding: 8px 18px; 
-            border-radius: 30px; 
-            font-size: 0.85rem; 
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border: 1px solid var(--border-teal);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
             font-weight: 600;
-            color: var(--secondary); 
-            letter-spacing: 0.05em;
+            transition: all var(--transition);
+        }
+        .github-link:hover {
+            border-color: var(--accent-teal-bright);
+            color: var(--accent-teal-bright);
+            background: rgba(0, 229, 193, 0.05);
+        }
+
+        /* ===== Hero Section ===== */
+        .hero {
+            padding: 80px 0 50px;
+            text-align: center;
+            background: var(--bg-dark);
+            border-bottom: 1px solid var(--border-teal);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 128, 128, 0.12) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            filter: blur(50px);
+            z-index: 0;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        .hero-badge {
+            display: inline-block;
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent-teal-bright);
+            background: rgba(0, 229, 193, 0.1);
+            border: 1px solid rgba(0, 229, 193, 0.2);
+            padding: 6px 14px;
+            border-radius: 100px;
+            margin-bottom: 16px;
             text-transform: uppercase;
         }
-        
-        .btn { 
-            padding: 16px 32px; 
-            background: var(--primary); 
-            color: #18181b; /* dark text for contrast */
-            text-decoration: none; 
-            font-weight: 700; 
-            font-family: 'Space Grotesk', sans-serif;
-            border-radius: 8px; 
-            transition: all 0.2s; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 10px; 
-            font-size: 1.1rem;
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.2rem, 5vw, 3.4rem);
+            font-weight: 800;
+            margin-bottom: 12px;
+            line-height: 1.2;
         }
-        
-        .btn:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3); 
-            background: var(--secondary); 
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto 32px;
         }
-        
-        /* App Mockup UI */
-        .mockup { 
-            margin-top: 70px; 
-            width: 100%; 
-            max-width: 1000px; 
-            height: 550px; 
-            background: var(--surface); 
-            border-radius: 16px; 
-            border: 1px solid rgba(255,255,255,0.08); 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6); 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; 
-            position: relative; 
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 28px;
+            background: var(--accent-teal);
+            color: #fff;
+            font-family: var(--font-display);
+            font-weight: 700;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition);
         }
-        
-        .mockup-header { 
-            height: 44px; 
-            background: rgba(0,0,0,0.4); 
-            border-bottom: 1px solid rgba(255,255,255,0.05); 
-            display: flex; 
-            align-items: center; 
-            padding: 0 20px; 
-            gap: 8px; 
-        }
-        
-        .dot { width: 12px; height: 12px; border-radius: 50%; }
-        .dot.r { background: #ef4444; } .dot.y { background: #f59e0b; } .dot.g { background: #10b981; }
-        
-        .mockup-body { 
-            flex: 1; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            position: relative; 
-            background: radial-gradient(circle at top center, rgba(255,255,255,0.03) 0%, transparent 100%); 
-        }
-        
-        /* TODO: replace this loading spinner with actual app screenshots later */
-        .loader { 
-            width: 60px; 
-            height: 60px; 
-            border: 3px solid rgba(255,255,255,0.05); 
-            border-top-color: var(--primary); 
-            border-radius: 50%; 
-            animation: spin 1s linear infinite; 
-            margin: 0 auto 20px; 
-        }
-        
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        
-        .mockup-text { text-align: center; color: var(--muted); z-index: 10; }
-        
-        /* Interactive overlay wireframe - purely CSS fake UI */
-        .wireframe { 
-            position: absolute; 
-            inset: 20px; 
-            border-radius: 8px; 
-            display: grid; 
-            grid-template-columns: 240px 1fr; 
-            gap: 20px; 
-            opacity: 0.6; 
-        }
-        
-        .wf-sidebar { 
-            background: rgba(255,255,255,0.02); 
-            border: 1px solid rgba(255,255,255,0.03);
-            border-radius: 8px; 
-        }
-        
-        .wf-main { 
-            display: grid; 
-            grid-template-rows: 70px 1fr; 
-            gap: 20px; 
-        }
-        
-        .wf-header { 
-            background: rgba(255,255,255,0.02); 
-            border: 1px solid rgba(255,255,255,0.03);
-            border-radius: 8px; 
-        }
-        
-        .wf-content { 
-            background: rgba(255,255,255,0.02); 
-            border: 1px solid rgba(255,255,255,0.03);
-            border-radius: 8px; 
+        .btn-primary:hover {
+            background: #009999;
+            box-shadow: 0 4px 15px var(--accent-glow);
+            transform: translateY(-1px);
         }
 
-        /* Features grid (newly added for the frontend view) */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
+        /* ===== Kanban Board Demo Mockup ===== */
+        .board-preview {
+            padding: 60px 0;
+        }
+        .browser-frame {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-teal);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
             max-width: 1000px;
-            margin: 80px auto;
-            padding: 0 20px;
-            text-align: left;
+            margin: 0 auto;
+        }
+        .browser-header {
+            background: #0a1111;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border-teal);
+        }
+        .window-dots {
+            display: flex;
+            gap: 6px;
+            margin-right: 20px;
+        }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #f59e0b; }
+        .dot-green { background: #10b981; }
+        .browser-url {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-teal);
+            padding: 5px 14px;
+            border-radius: var(--radius-sm);
+            flex: 1;
+            max-width: 450px;
+            font-family: var(--font-display);
+            font-size: 0.72rem;
+            color: var(--text-muted);
         }
 
-        .feature-card {
-            background: var(--surface);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 12px;
-            padding: 30px;
-            transition: all 0.3s;
+        /* Board mockup body layout */
+        .board-layout {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            min-height: 480px;
         }
 
-        .feature-card:hover {
-            border-color: rgba(245, 158, 11, 0.4);
-            transform: translateY(-5px);
+        /* Left Sidebar inside Mockup */
+        .board-sidebar {
+            background: #0e1616;
+            border-right: 1px solid var(--border-teal);
+            padding: 20px 14px;
+        }
+        .sidebar-title {
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+        .sidebar-links {
+            list-style: none;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            border-radius: var(--radius-sm);
+            margin-bottom: 4px;
+            transition: all var(--transition);
+        }
+        .sidebar-link.active {
+            background: rgba(0, 128, 128, 0.1);
+            color: var(--accent-teal-bright);
+            font-weight: 600;
+        }
+        .sidebar-link:hover:not(.active) {
+            background: rgba(255,255,255,0.02);
+            color: var(--text-primary);
         }
 
-        .feature-icon {
-            font-size: 2rem;
-            color: var(--primary);
+        /* Kanban Columns Container */
+        .board-main {
+            padding: 24px;
+            background: var(--bg-darker);
+            overflow-x: auto;
+        }
+        .board-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
         }
-
-        .feature-card h3 {
-            margin-bottom: 10px;
-            color: var(--text);
-            font-size: 1.3rem;
+        .board-header-row h3 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+        .board-columns {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            align-items: start;
+        }
+        .column {
+            background: var(--bg-board);
+            border: 1px solid var(--border-teal);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            min-height: 350px;
+        }
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-teal);
+        }
+        .column-title {
+            font-family: var(--font-display);
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .column-count {
+            background: var(--border-teal);
+            color: var(--text-secondary);
+            font-size: 0.72rem;
+            padding: 2px 6px;
+            border-radius: 20px;
+            font-weight: 600;
         }
 
+        /* Task Cards */
+        .task-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-teal);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .task-card:hover {
+            border-color: var(--accent-teal-bright);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
+        }
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .priority-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+        .priority-high { background: rgba(239, 68, 68, 0.12); color: #ef4444; }
+        .priority-med { background: rgba(245, 158, 11, 0.12); color: #f59e0b; }
+        .priority-low { background: rgba(16, 185, 129, 0.12); color: #10b981; }
+
+        .task-title {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .task-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .task-owner {
+            display: flex;
+            gap: -4px;
+        }
+        .avatar {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--accent-teal);
+            color: #fff;
+            font-family: var(--font-display);
+            font-size: 0.65rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--bg-card);
+        }
+        .avatar-am { background: var(--text-muted); }
+        .task-move-hint {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== Features Grid ===== */
+        .features {
+            padding: 80px 0;
+            background: var(--bg-dark);
+            border-top: 1px solid var(--border-teal);
+            border-bottom: 1px solid var(--border-teal);
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        .section-header h2 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+        .section-header p {
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+        }
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-teal);
+            padding: 30px;
+            border-radius: var(--radius-md);
+        }
+        .feature-card i {
+            font-size: 1.6rem;
+            color: var(--accent-teal-bright);
+            margin-bottom: 16px;
+        }
+        .feature-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
         .feature-card p {
-            color: var(--muted);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* ===== Footer ===== */
+        .footer {
+            padding: 48px 0;
+            background: var(--bg-darker);
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .footer-logo {
+            font-family: var(--font-display);
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+        .footer-logo span {
+            color: var(--accent-teal-bright);
+        }
+        .footer a {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .footer a:hover {
+            color: var(--accent-teal-bright);
+        }
+
+        /* Alternating backgrounds override */
+        section:nth-of-type(even) {
+            background-color: var(--bg-dark) !important;
+        }
+        section:nth-of-type(odd) {
+            background-color: var(--bg-darker) !important;
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="bg-glow"></div>
-        <h1>CCGworkflow</h1>
-        <h2>Enterprise Team Collaboration Tool</h2>
-        <p class="desc">A robust workflow management system built to streamline processes. Features Kanban boards, real-time sync, role-based access, and automated task assignments.</p>
-        
-        <div class="tech-tags">
-            <span>TypeScript</span>
-            <span>React</span>
-            <span>Node.js</span>
-            <span>Redux</span>
-            <span>PostgreSQL</span>
-        </div>
-        
-        <a href="https://github.com/Fred4377/CCGworkflow" class="btn">
-            <i class="fab fa-github"></i> View on GitHub
-        </a>
-        
-        <div class="mockup">
-            <div class="mockup-header">
-                <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-            </div>
-            <div class="mockup-body">
-                <div class="wireframe">
-                    <div class="wf-sidebar"></div>
-                    <div class="wf-main">
-                        <div class="wf-header"></div>
-                        <div class="wf-content"></div>
-                    </div>
-                </div>
-                <div class="mockup-text">
-                    <div class="loader"></div>
-                    <h3 style="font-size: 1.4rem; color: #f4f4f5;">App Initializing...</h3>
-                    <p style="font-size: 0.95rem; margin-top: 8px;">The backend API cluster is currently waking up.</p>
-                </div>
-            </div>
-        </div>
 
-        <div class="features">
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-layer-group"></i></div>
-                <h3>Kanban Boards</h3>
-                <p>Drag and drop tasks through customizable pipelines. Perfect for agile teams looking to visualize their workflow seamlessly.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-bolt"></i></div>
-                <h3>Real-time Sync</h3>
-                <p>WebSockets under the hood ensure that when a teammate updates a ticket, everyone's board updates instantly without refreshing.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-shield-halved"></i></div>
-                <h3>Role Based Access</h3>
-                <p>Granular permissions mean admins can lock down sensitive projects while still giving read access to stakeholders.</p>
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="#" class="logo">
+                <i class="fa-solid fa-layer-group"></i>CCG<span>workflow</span>
+            </a>
+            <a href="https://github.com/Fred4377/CCGworkflow" target="_blank" rel="noopener noreferrer" class="github-link">
+                <i class="fa-brands fa-github"></i> GitHub
+            </a>
+        </div>
+    </nav>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+        <div class="hero-glow"></div>
+        <div class="container hero-content">
+            <div class="hero-badge">TypeScript Scrum Board Mockup</div>
+            <h1>Visual Workflow Streamlining</h1>
+            <p>
+                A minimal, teal-themed agile workspace demo. Track project logs,
+                assign priorities, and move tasks through dynamic pipelines.
+            </p>
+            <a href="#demo" class="btn-primary">
+                <i class="fa-solid fa-table-columns"></i> View Active Scrum Board
+            </a>
+        </div>
+    </section>
+
+    <!-- ===== DEMO BOARD ===== -->
+    <section class="board-preview" id="demo">
+        <div class="container">
+            <div class="browser-frame">
+                <!-- Browser header -->
+                <div class="browser-header">
+                    <div class="window-dots">
+                        <div class="dot dot-red"></div>
+                        <div class="dot dot-yellow"></div>
+                        <div class="dot dot-green"></div>
+                    </div>
+                    <div class="browser-url">ccgworkflow.fredev.co.ke/kanban</div>
+                </div>
+
+                <!-- Board body -->
+                <div class="board-layout">
+                    <!-- Sidebar -->
+                    <aside class="board-sidebar">
+                        <div class="sidebar-title">Workspaces</div>
+                        <ul class="sidebar-links">
+                            <li><a href="#" class="sidebar-link active"><i class="fa-solid fa-code"></i> Dev Portfolio</a></li>
+                            <li><a href="#" class="sidebar-link"><i class="fa-solid fa-bag-shopping"></i> ShopEase App</a></li>
+                            <li><a href="#" class="sidebar-link"><i class="fa-solid fa-scissors"></i> Barbershop</a></li>
+                        </ul>
+                    </aside>
+
+                    <!-- Main column grid -->
+                    <main class="board-main">
+                        <div class="board-header-row">
+                            <h3>Fred's Portfolio Sprint Board</h3>
+                            <span style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-display);">Click card to shift columns</span>
+                        </div>
+
+                        <div class="board-columns">
+                            <!-- TODO column -->
+                            <div class="column" id="colTodo">
+                                <div class="column-header">
+                                    <span class="column-title">To Do</span>
+                                    <span class="column-count" id="countTodo">2</span>
+                                </div>
+                                <div class="column-cards" id="cardsTodo">
+                                    <div class="task-card" data-id="1" data-priority="high">
+                                        <div class="task-header">
+                                            <span class="priority-badge priority-high">High</span>
+                                        </div>
+                                        <div class="task-title">Refactor ShopEase billing module</div>
+                                        <div class="task-footer">
+                                            <div class="task-owner">
+                                                <div class="avatar">FO</div>
+                                            </div>
+                                            <span class="task-move-hint"><i class="fa-solid fa-arrow-right"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="task-card" data-id="2" data-priority="med">
+                                        <div class="task-header">
+                                            <span class="priority-badge priority-med">Medium</span>
+                                        </div>
+                                        <div class="task-title">Deploy Hotel Booking site remote builds</div>
+                                        <div class="task-footer">
+                                            <div class="task-owner">
+                                                <div class="avatar">FO</div>
+                                            </div>
+                                            <span class="task-move-hint"><i class="fa-solid fa-arrow-right"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- IN PROGRESS column -->
+                            <div class="column" id="colProgress">
+                                <div class="column-header">
+                                    <span class="column-title">In Progress</span>
+                                    <span class="column-count" id="countProgress">2</span>
+                                </div>
+                                <div class="column-cards" id="cardsProgress">
+                                    <div class="task-card" data-id="3" data-priority="high">
+                                        <div class="task-header">
+                                            <span class="priority-badge priority-high">High</span>
+                                        </div>
+                                        <div class="task-title">Review Nyakach TVC portfolio checklist files</div>
+                                        <div class="task-footer">
+                                            <div class="task-owner">
+                                                <div class="avatar">FO</div>
+                                                <div class="avatar avatar-am">AM</div>
+                                            </div>
+                                            <span class="task-move-hint"><i class="fa-solid fa-arrow-right"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="task-card" data-id="4" data-priority="high">
+                                        <div class="task-header">
+                                            <span class="priority-badge priority-high">High</span>
+                                        </div>
+                                        <div class="task-title">Integrate Lipa na M-Pesa STK Daraja endpoint</div>
+                                        <div class="task-footer">
+                                            <div class="task-owner">
+                                                <div class="avatar">FO</div>
+                                            </div>
+                                            <span class="task-move-hint"><i class="fa-solid fa-arrow-right"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- DONE column -->
+                            <div class="column" id="colDone">
+                                <div class="column-header">
+                                    <span class="column-title">Done</span>
+                                    <span class="column-count" id="countDone">2</span>
+                                </div>
+                                <div class="column-cards" id="cardsDone">
+                                    <div class="task-card" data-id="5" data-priority="low">
+                                        <div class="task-header">
+                                            <span class="priority-badge priority-low">Low</span>
+                                        </div>
+                                        <div class="task-title">Setup DashPro analytics skeleton layout</div>
+                                        <div class="task-footer">
+                                            <div class="task-owner">
+                                                <div class="avatar">FO</div>
+                                            </div>
+                                            <span class="task-move-hint"><i class="fa-solid fa-arrow-left"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="task-card" data-id="6" data-priority="high">
+                                        <div class="task-header">
+                                            <span class="priority-badge priority-high">High</span>
+                                        </div>
+                                        <div class="task-title">Create BookEase client reservation models</div>
+                                        <div class="task-footer">
+                                            <div class="task-owner">
+                                                <div class="avatar">FO</div>
+                                            </div>
+                                            <span class="task-move-hint"><i class="fa-solid fa-arrow-left"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
             </div>
         </div>
-    </header>
+    </section>
+
+    <!-- ===== FEATURES ===== -->
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Product Capabilities</h2>
+                <p>Designed for collaborative scrum groups to organize work pipelines efficiently.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fa-solid fa-table-columns"></i>
+                    <h3>Kanban Organization</h3>
+                    <p>Track sprints visually by structuring columns, dragging items, and prioritizing tasks.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fa-solid fa-arrows-spin"></i>
+                    <h3>Instant Callback Sync</h3>
+                    <p>Synchronizes board actions across team nodes in real-time using lightweight sockets under the hood.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <h3>Role Permissions</h3>
+                    <p>Assign tasks, tags, or deadlines, with custom credentials for admins, reviewers, and coders.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logo">
+                <i class="fa-solid fa-layer-group"></i>CCG<span>workflow</span>
+            </div>
+            <p style="margin-bottom: 8px;">Built by <a href="https://github.com/Fred4377" target="_blank" rel="noopener noreferrer">Fred Otieno</a></p>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">&copy; 2026 CCGworkflow. MIT Licensed Kanban Platform.</p>
+        </div>
+    </footer>
+
+    <!-- ===== Interactive Shift Logic ===== -->
+    <script>
+        // Columns References
+        const colTodo = document.getElementById('cardsTodo');
+        const colProgress = document.getElementById('cardsProgress');
+        const colDone = document.getElementById('cardsDone');
+
+        const countTodo = document.getElementById('countTodo');
+        const countProgress = document.getElementById('countProgress');
+        const countDone = document.getElementById('countDone');
+
+        function updateCounts() {
+            countTodo.textContent = colTodo.children.length;
+            countProgress.textContent = colProgress.children.length;
+            countDone.textContent = colDone.children.length;
+        }
+
+        // Click handler to shift cards
+        document.getElementById('demo').addEventListener('click', (e) => {
+            const card = e.target.closest('.task-card');
+            if (!card) return;
+
+            const parentCol = card.parentElement.id;
+            let targetCol;
+
+            if (parentCol === 'cardsTodo') {
+                targetCol = colProgress;
+                card.querySelector('.task-move-hint').innerHTML = '<i class="fa-solid fa-arrow-right"></i>';
+            } else if (parentCol === 'cardsProgress') {
+                targetCol = colDone;
+                card.querySelector('.task-move-hint').innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
+            } else if (parentCol === 'cardsDone') {
+                targetCol = colTodo;
+                card.querySelector('.task-move-hint').innerHTML = '<i class="fa-solid fa-arrow-right"></i>';
+            }
+
+            if (targetCol) {
+                targetCol.appendChild(card);
+                updateCounts();
+            }
+        });
+
+        updateCounts();
+    </script>
 </body>
 </html>
