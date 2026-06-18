@@ -31,6 +31,16 @@
             --radius-md: 8px;
             --radius-lg: 12px;
             --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-spring: transform 0.6s linear(
+                0, 0.0121, 0.0478, 0.1057, 0.1834, 0.2774, 0.3837, 0.4975, 0.6139, 0.7274, 0.8327, 0.9251, 1.0006, 1.0565, 
+                1.0917, 1.1076, 1.1058, 1.0888, 1.0601, 1.0232, 0.9823, 0.9419, 0.9066, 0.8804, 0.8654, 0.8617, 0.8691, 
+                0.8859, 0.9103, 0.9404, 0.9734, 1.0063, 1.0366, 1.0621, 1.0812, 1.0924, 1.0959, 1.0927, 1.0827, 1.0681, 
+                1.0506, 1.0319, 1.0138, 0.9976, 0.9845, 0.9752, 0.9706, 0.9705, 0.9749, 0.9827, 0.9926, 1.0033, 1.0135, 
+                1.0223, 1.0289, 1.0326, 1.0337, 1.0317, 1.0271, 1.0205, 1.0129, 1.0051, 0.998, 0.992, 0.9877, 0.9856, 
+                0.9859, 0.9885, 0.9928, 0.9982, 1.0042, 1.0099, 1.0146, 1.0177, 1.0191, 1.0189, 1.0171, 1.0143, 1.0109, 
+                1.0074, 1.0041, 1.0014, 0.9995, 0.9984, 0.9981, 0.9985, 0.9994, 1.0006, 1.0019, 1.0029, 1.0036, 1.0039, 
+                1.0038, 1.0033, 1.0026, 1.0018, 1.001, 1.0003, 0.9998, 0.9995, 0.9994, 0.9995, 0.9997, 1
+            );
         }
 
         *, *::before, *::after {
@@ -99,12 +109,13 @@
             border-radius: var(--radius-sm);
             font-size: 0.85rem;
             font-weight: 600;
-            transition: all var(--transition);
+            transition: var(--transition-spring), border-color 0.3s ease, color 0.3s ease, background-color 0.3s ease;
         }
         .github-link:hover {
             border-color: var(--accent-teal-bright);
             color: var(--accent-teal-bright);
             background: rgba(0, 229, 193, 0.05);
+            transform: translateY(-2px) scale(1.03);
         }
 
         /* ===== Hero Section ===== */
@@ -167,12 +178,12 @@
             font-family: var(--font-display);
             font-weight: 700;
             border-radius: var(--radius-sm);
-            transition: all var(--transition);
+            transition: var(--transition-spring), background-color 0.3s ease, box-shadow 0.3s ease;
         }
         .btn-primary:hover {
             background: #009999;
-            box-shadow: 0 4px 15px var(--accent-glow);
-            transform: translateY(-1px);
+            box-shadow: 0 10px 25px var(--accent-glow);
+            transform: translateY(-4px) scale(1.03);
         }
 
         /* ===== Kanban Board Demo Mockup ===== */
@@ -324,12 +335,12 @@
             padding: 12px;
             margin-bottom: 10px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: var(--transition-spring), border-color 0.3s ease, box-shadow 0.3s ease;
         }
         .task-card:hover {
             border-color: var(--accent-teal-bright);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(0, 229, 193, 0.15);
+            transform: translateY(-4px) scale(1.02);
         }
         .task-header {
             display: flex;
@@ -416,6 +427,12 @@
             border: 1px solid var(--border-teal);
             padding: 30px;
             border-radius: var(--radius-md);
+            transition: var(--transition-spring), border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .feature-card:hover {
+            border-color: var(--accent-teal-bright);
+            box-shadow: 0 10px 25px var(--accent-glow);
+            transform: translateY(-8px) scale(1.03);
         }
         .feature-card i {
             font-size: 1.6rem;
@@ -465,6 +482,13 @@
         }
         section:nth-of-type(odd) {
             background-color: var(--bg-darker) !important;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .feature-card, .btn-primary, .github-link, .task-card {
+                transition: none !important;
+                transform: none !important;
+            }
         }
     </style>
 </head>
